@@ -17,19 +17,30 @@ let number = Math.trunc(Math.random() * 20) + 1;
 let score = 20;
 let highscore = 0;
 
+//expects string, outputs string on site in message area
+function displayMessage(message) {
+    changeContent(".message", message);
+}
+
+//takes a css class and some message and changes the html text
+function changeContent(className, newContent) {
+    document.querySelector(className).textContent = newContent;
+}
+
 document.querySelector(".check").addEventListener("click", function () {
     const guess = Number(document.querySelector(".guess").value);
 
     //when there is no input
     if (!guess) {
         //if button is pressed with nothing in box it will return 0 (falsy)
-        document.querySelector(".message").textContent = "No Number :(";
+        // document.querySelector(".message").textContent = "No Number :(";
+        displayMessage("No Number :(");
 
         //when player wins
     } else if (guess === number) {
         //display message and number after correct choice
-        document.querySelector(".message").textContent = "Correct Number! 🙌";
-        document.querySelector(".number").textContent = number;
+        displayMessage("Correct Number! 🙌");
+        changeContent(".number", number);
 
         //style after correct choice
         document.querySelector("body").style.backgroundColor = "#60B347";
@@ -38,11 +49,23 @@ document.querySelector(".check").addEventListener("click", function () {
         //set highscore
         if (score > highscore) {
             highscore = score;
-            document.querySelector(".highscore").textContent = highscore;
+            changeContent(".highscore", highscore);
         }
 
-        //when guess is too high
-    } else if (guess > number) {
+        //when guess is wrong
+    } else if (guess !== number) {
+        if (score > 1) {
+            displayMessage(guess > number ? "Too high! 😥" : "Too low! 🤷‍♂️");
+            changeContent(".score", --score);
+        } else {
+            displayMessage("You lost the game 😭");
+            changeContent(".score", 0);
+        }
+    }
+
+    //----------below code kept as reference---------
+    //when guess is too high
+    /* else if (guess > number) {
         if (score > 1) {
             document.querySelector(".message").textContent = "Too high! 🙈";
             document.querySelector(".score").textContent = --score;
@@ -62,18 +85,18 @@ document.querySelector(".check").addEventListener("click", function () {
                 "You lost the game 😭";
             document.querySelector(".score").textContent = --score;
         }
-    }
+    } */
 });
 
 //when again button is clicked
 document.querySelector(".again").addEventListener("click", function () {
     //reset initial values of score and random number
     number = Math.trunc(Math.random() * 20) + 1;
-    document.querySelector(".score").textContent = score = 20;
+    changeContent(".score", (score = 20));
 
     //reset values on page
-    document.querySelector(".message").textContent = "Start guessing...";
-    document.querySelector(".number").textContent = "?";
+    displayMessage("Start guessing...");
+    changeContent(".number", "?");
     document.querySelector(".guess").value = "";
 
     //reset styling of page
